@@ -7,9 +7,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -39,8 +42,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun TodoApp() {
-    val viewModel: TodoViewModel = viewModel()
+fun TodoApp(viewModel: TodoViewModel = viewModel()) {
     val todos by viewModel.todos.collectAsState()
     var title by remember { mutableStateOf("") }
     var deadline by remember { mutableStateOf("") }
@@ -48,10 +50,14 @@ fun TodoApp() {
 
     Column(modifier = Modifier.padding(26.dp)) {
         Text("新增/編輯待辦", style = MaterialTheme.typography.titleLarge)
-        Text("事情：", style = MaterialTheme.typography.titleMedium)
-        BasicTextField(value = title, onValueChange = { title = it }, modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp))
-        Text("日期：", style = MaterialTheme.typography.titleMedium)
-        BasicTextField(value = deadline, onValueChange = { deadline = it }, modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp))
+        Text("標題：", style = MaterialTheme.typography.titleMedium)
+        BasicTextField(value = title, onValueChange = { title = it }, modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp))
+        Text("期限：", style = MaterialTheme.typography.titleMedium)
+        BasicTextField(value = deadline, onValueChange = { deadline = it }, modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp))
 
         Button(onClick = {
             if (editingId == null) {
@@ -68,16 +74,20 @@ fun TodoApp() {
 
         Spacer(modifier = Modifier.height(16.dp))
         Text("待辦清單", style = MaterialTheme.typography.titleMedium)
-        todos.forEach { todo ->
-            TodoItemRow(
-                todo = todo,
-                onEdit = {
-                    title = it.title
-                    deadline = it.deadline
-                    editingId = it.id
-                },
-                onDelete = { viewModel.deleteTodo(it) }
-            )
+
+        // ✅ 這裡改用 LazyColumn 可滑動
+        LazyColumn(modifier = Modifier.fillMaxHeight()) {
+            items(todos) { todo ->
+                TodoItemRow(
+                    todo = todo,
+                    onEdit = {
+                        title = it.title
+                        deadline = it.deadline
+                        editingId = it.id
+                    },
+                    onDelete = { viewModel.deleteTodo(it) }
+                )
+            }
         }
     }
 }
