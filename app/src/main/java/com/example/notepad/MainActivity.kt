@@ -48,6 +48,7 @@ fun TodoApp(viewModel: TodoViewModel = viewModel()) {
     var deadline by remember { mutableStateOf("") }
     var editingId by remember { mutableStateOf<Int?>(null) }
 
+    //新增、編輯資料處
     Column(modifier = Modifier.padding(26.dp)) {
         Text("新增/編輯待辦", style = MaterialTheme.typography.titleLarge)
         Text("標題：", style = MaterialTheme.typography.titleMedium)
@@ -75,7 +76,7 @@ fun TodoApp(viewModel: TodoViewModel = viewModel()) {
         Spacer(modifier = Modifier.height(16.dp))
         Text("待辦清單", style = MaterialTheme.typography.titleMedium)
 
-        // ✅ 這裡改用 LazyColumn 可滑動
+        // 這裡改用 LazyColumn 可滑動
         LazyColumn(modifier = Modifier.fillMaxHeight()) {
             items(todos) { todo ->
                 TodoItemRow(
@@ -92,6 +93,7 @@ fun TodoApp(viewModel: TodoViewModel = viewModel()) {
     }
 }
 
+//儲存資料
 class TodoViewModel : ViewModel() {
     private val _todos = MutableStateFlow<List<Todo>>(emptyList())
     val todos = _todos.asStateFlow()
@@ -120,6 +122,7 @@ data class Todo(
     var deadline: String // 可進一步改為 LocalDate
 )
 
+//待辦事項
 @Composable
 fun TodoItemRow(todo: Todo, onEdit: (Todo) -> Unit, onDelete: (Int) -> Unit) {
     Row(modifier = Modifier.fillMaxWidth().padding(8.dp), horizontalArrangement = Arrangement.SpaceBetween) {
